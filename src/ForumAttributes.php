@@ -34,7 +34,8 @@ class ForumAttributes
             // might have been because of https://github.com/flarum/framework/issues/3438
             $attributes['anonymousHelpTextPosition'] = $this->settings->get('anonymous-posting.composerHelpTextPosition') ?: 'visible';
 
-            $avatarRules = json_decode((string)$this->settings->get('anonymous-posting.formulaireAvatars'), true);
+            $avatarRulesJson = $this->settings->get('anonymous-posting.formulaireAvatars');
+            $avatarRules = is_string($avatarRulesJson) ? json_decode($avatarRulesJson, true) : [];
 
             if (is_array($avatarRules) && class_exists(Submission::class)) {
                 $attributes['anonymousAvatarUrl'] = AnonymousAvatar::retrieve(
@@ -46,7 +47,8 @@ class ForumAttributes
                 );
             }
         }
-        $anonymousUsers = json_decode($this->settings->get('anonymous-posting.anonymousUsers'), true);
+        $anonymousUsersJson = $this->settings->get('anonymous-posting.anonymousUsers');
+        $anonymousUsers = is_string($anonymousUsersJson) ? json_decode($anonymousUsersJson, true) : [];
         if (is_array($anonymousUsers) && class_exists(Tag::class)) {
             $attributes['anonymousImposters'] = AnonymousUserProfile::retrieveAll($anonymousUsers, $serializer->getActor());
         }
